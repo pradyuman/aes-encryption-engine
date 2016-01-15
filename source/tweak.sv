@@ -1,0 +1,47 @@
+// $Id: $
+// File name:   tweak.sv
+// Created:     11/16/2015
+// Author:      Xiangyu Li
+// Lab Section: 337-02
+// Version:     1.0  Initial Design Entry
+// Description: Generate tweak value
+
+
+module tweak(
+	input wire clk, read, tk_ud, write, [127:0] tweak_0, 
+	output reg [127:0] alpha,oldalpha
+);
+	reg [127:0] next_alpha;
+	reg [127:0] next_oldalpha;
+
+	always_comb 
+	begin:genalpha
+		if (tk_ud) next_alpha=tweak_0;
+		else if (read) //double in GF
+		begin
+			if (alpha[7]) next_alpha={alpha[126:120],1'b0,alpha[118:112],alpha[127],alpha[110:104],alpha[119],alpha[102:96],alpha[111],alpha[94:88],alpha[103],alpha[86:80],alpha[95],alpha[78:72],alpha[87],alpha[70:64],alpha[79],alpha[62:56],alpha[71],alpha[54:48],alpha[63],alpha[46:40],alpha[55],alpha[38:32],alpha[47],alpha[30:24],alpha[39],alpha[22:16],alpha[31],alpha[14:8],alpha[23],alpha[6:0],alpha[15]} ^ {128'h87000000000000000000000000000000};
+			else next_alpha={alpha[126:120],1'b0,alpha[118:112],alpha[127],alpha[110:104],alpha[119],alpha[102:96],alpha[111],alpha[94:88],alpha[103],alpha[86:80],alpha[95],alpha[78:72],alpha[87],alpha[70:64],alpha[79],alpha[62:56],alpha[71],alpha[54:48],alpha[63],alpha[46:40],alpha[55],alpha[38:32],alpha[47],alpha[30:24],alpha[39],alpha[22:16],alpha[31],alpha[14:8],alpha[23],alpha[6:0],alpha[15]};
+		end		
+		else next_alpha=alpha;
+	end
+
+	always_comb 
+	begin:genoldalpha
+		if (tk_ud) next_oldalpha=tweak_0;
+		else if (write) //double in GF
+		begin
+			if (oldalpha[7]) next_oldalpha={oldalpha[126:120],1'b0,oldalpha[118:112],oldalpha[127],oldalpha[110:104],oldalpha[119],oldalpha[102:96],oldalpha[111],oldalpha[94:88],oldalpha[103],oldalpha[86:80],oldalpha[95],oldalpha[78:72],oldalpha[87],oldalpha[70:64],oldalpha[79],oldalpha[62:56],oldalpha[71],oldalpha[54:48],oldalpha[63],oldalpha[46:40],oldalpha[55],oldalpha[38:32],oldalpha[47],oldalpha[30:24],oldalpha[39],oldalpha[22:16],oldalpha[31],oldalpha[14:8],oldalpha[23],oldalpha[6:0],oldalpha[15]} ^ {128'h87000000000000000000000000000000};
+			else next_oldalpha={oldalpha[126:120],1'b0,oldalpha[118:112],oldalpha[127],oldalpha[110:104],oldalpha[119],oldalpha[102:96],oldalpha[111],oldalpha[94:88],oldalpha[103],oldalpha[86:80],oldalpha[95],oldalpha[78:72],oldalpha[87],oldalpha[70:64],oldalpha[79],oldalpha[62:56],oldalpha[71],oldalpha[54:48],oldalpha[63],oldalpha[46:40],oldalpha[55],oldalpha[38:32],oldalpha[47],oldalpha[30:24],oldalpha[39],oldalpha[22:16],oldalpha[31],oldalpha[14:8],oldalpha[23],oldalpha[6:0],oldalpha[15]};
+		end		
+		else next_oldalpha=oldalpha;
+	end
+
+	
+	always_ff @ (posedge clk)
+	begin
+		alpha<=next_alpha;
+		oldalpha<=next_oldalpha;
+	end
+
+endmodule 
+	

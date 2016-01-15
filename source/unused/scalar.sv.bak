@@ -1,0 +1,7 @@
+// $Id: $
+// File name:   scalar.sv
+// Created:     11/28/2015
+// Author:      Xiangyu Li
+// Lab Section: 337-02
+// Version:     1.0  Initial Design Entry
+// Description: AES module scalar. Can attach more aes modules with only one parameter
